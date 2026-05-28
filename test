@@ -1,0 +1,25 @@
+// Azure App Service Upgrade Hit-List (Non-RI Compliant Tiers)
+resources
+| where type =~ 'microsoft.web/serverfarms'
+| extend skuTier = sku.tier, skuName = sku.name
+// Filter strictly for tiers that do not support Reserved Instances
+| where skuTier !in~ ('PremiumV3', 'PremiumV4', 'IsolatedV2')
+| extend isLinux = tostring(properties.reserved)
+| extend osPlatform = iif(isLinux == "true", "Linux", "Windows")
+// Resolve Management Group ancestry details
+| join kind=leftouter (
+    ResourceContainers 
+    | where type =~ 'microsoft.resources/subscriptions' 
+    | project subscriptionId, subscriptionName = name, managementGroup = tostring(properties.managementGroupAncestorsChain[0].displayName)
+) on subscriptionId
+| project 
+    ManagementGroup = managementGroup,
+    SubscriptionName = subscriptionName,
+    ResourceGroup = resourceGroup,
+    AppServicePlanName = name,
+    Location = location,
+    OS = osPlatform,
+    CurrentTier = skuTier,
+    CurrentSKU = skuName,
+    InstanceCount = sku.capacity
+| order by ManagementGroup asc, SubscriptionName asc, CurrentTier asc
