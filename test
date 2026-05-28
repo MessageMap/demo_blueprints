@@ -86,3 +86,60 @@ Use this structured matrix to map the output of your rectified Azure Resource Gr
 - [ ] Purchase the App Service Reservation matching the consolidated OS, Region, and instance counts.
 - [ ] Set Reservation Scope to **Management Group**.
 - [ ] Confirm cost reduction in **Cost Management + Billing** within 24–48 hours of purchase.
+
+
+
+
+
+sku_options = {
+  # ---------------------------------------------------------------------------
+  # COST OPTIMIZATION COMPLIANT TIERS (Eligible for Reserved Instances / Savings Plans)
+  # ---------------------------------------------------------------------------
+  "PremiumV3" = [
+    "P1v3", "P2v3", "P3v3" # Fully Eligible. Standard baseline choice for RI savings.
+  ]
+  "PremiumMv3" = [
+    "P1mv3", "P2mv3", "P3mv3", "P4mv3", "P5mv3" # Fully Eligible. High-memory workloads.
+  ]
+  "PremiumV4" = [
+    "P1v4", "P2v4", "P3v4" # Fully Eligible. Latest compute generation; higher performance, highly optimized for savings plans.
+  ]
+  "PremiumMv4" = [
+    "P1mv4", "P2mv4", "P3mv4", "P4mv4", "P5mv4" # Fully Eligible. Newest memory-optimized generation.
+  ]
+  "IsolatedV2" = [
+    "I1v2", "I2v2", "I3v2", "I4v2", "I5v2", "I6v2" # Fully Eligible. Dedicated single-tenant ASEv3 deployments.
+  ]
+
+  # ---------------------------------------------------------------------------
+  # LEGACY / PAY-AS-YOU-GO TIERS (DO NOT REMOVE - Deprecated for Corporate Savings)
+  # RECOMMENDATION: Upgrade these to PremiumV3 or PremiumV4 to unlock 35-55% RI discounts.
+  # ---------------------------------------------------------------------------
+  "Standard" = [
+    "S1", "S2", "S3" # INELIGIBLE for RIs. RECOMMENDATION: Upgrade to P1v3/P2v3. Equal or better pricing with RI applied, significantly higher performance.
+  ]
+  "PremiumV2" = [
+    "P1v2", "P2v2", "P3v2" # INELIGIBLE for RIs. RECOMMENDATION: Upgrade to P1v3. Legacy hardware; Pv3 retail is often cheaper or equal to Pv2 even before RI overlays.
+  ]
+  "Premium" = [
+    "P1", "P2", "P3" # INELIGIBLE for RIs. DEPRECATED legacy compute. Must be upgraded to eliminate major on-demand billing leaks.
+  ]
+  "Isolated" = [
+    "I1", "I2", "I3" # INELIGIBLE for RIs. Legacy ASEv2 hardware. Strongly recommend migration to IsolatedV2 (ASEv3) to remove stamp fees.
+  ]
+
+  # ---------------------------------------------------------------------------
+  # NON-COMPUTE / WORKFLOW & CONSUMPTION TIERS (No RI Actions Required)
+  # ---------------------------------------------------------------------------
+  "ElasticPremium"   = ["EP1", "EP2", "EP3"] # Functions Elastic Premium (Eligible for Savings Plans, but not standard App Service RIs)
+  "Consumption"      = ["FC1"]               # Serverless Function App Plan (Pure pay-per-execution)
+  "WorkflowStandard" = ["WS1", "WS2", "WS3"] # Logic Apps Standard Dedicated Plan
+  "Dynamic"          = ["Y1"]                # Consumption serverless tier
+
+  # ---------------------------------------------------------------------------
+  # DEV / TESTING ZERO-COST TIERS (Safe from billing leaks)
+  # ---------------------------------------------------------------------------
+  "Free"  = ["F1", "Free"] # Non-billable sandbox tiers. No action required.
+  "Shared" = ["D1", "Shared"]
+  "Basic"  = ["B1", "B2", "B3"] # Low-cost Dev/Test. Ineligible for RIs, but typically outside production savings scope.
+}
