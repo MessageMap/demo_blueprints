@@ -164,3 +164,51 @@ zone_redundant_list = [
   "i1v2", "i2v2", "i3v2", "i4v2", "i5v2", "i6v2"
 ]
 
+
+
+variable "sku_tier" {
+  type        = string
+  default     = "Free"
+  description = <<EOT
+Tier Options: Free, Shared, Basic, Standard, Premium, PremiumV2, PremiumV3, PremiumV4, PremiumMv3, PremiumMv4, IsolatedV2, Dynamic.
+COST SAVINGS RECOMMENDATION: 
+- Use 'PremiumV3', 'PremiumV4', 'PremiumMv3', or 'PremiumMv4' for production workloads to qualify for 35-55% Reserved Instance / Savings Plan discounts.
+- Avoid 'Standard' or 'PremiumV2' for long-running apps, as they are billed at high on-demand retail rates.
+EOT
+}
+
+variable "sku_size" {
+  type        = string
+  default     = "F1"
+  description = <<EOT
+Sku Sizes:
+- Free             = ['F1', 'Free']
+- Shared           = ['D1', 'Shared']
+- Basic            = ['B1', 'B2', 'B3']
+- Standard         = ['S1', 'S2', 'S3']       (Legacy - Upgrade recommended)
+- Premium          = ['P1', 'P2', 'P3']       (Legacy - Upgrade recommended)
+- PremiumV2        = ['P1v2', 'P2v2', 'P3v2'] (Legacy - Upgrade recommended)
+- PremiumV3        = ['P1v3', 'P2v3', 'P3v3'] -> COST OPTIMIZED (Supports RIs)
+- PremiumV4        = ['P1v4', 'P2v4', 'P3v4'] -> COST OPTIMIZED (Latest generation, supports Savings Plans)
+- PremiumMv3       = ['P1mv3', 'P2mv3', 'P3mv3', 'P4mv3', 'P5mv3'] (Memory Optimized RI Eligible)
+- PremiumMv4       = ['P1mv4', 'P2mv4', 'P3mv4', 'P4mv4', 'P5mv4'] (Newest Memory Optimized)
+- IsolatedV2       = ['I1v2', 'I2v2', 'I3v2', 'I4v2', 'I5v2', 'I6v2'] -> COST OPTIMIZED (ASEv3)
+- Dynamic          = ['Y1']
+EOT
+}
+
+variable "os" {
+  type        = string
+  default     = "Linux"
+  description = "OS type to run. Options: Linux or Windows"
+}
+
+# ---------------------------------------------------------------------------
+# FIXING DETECTED HOOD BUG BELOW:
+# ---------------------------------------------------------------------------
+variable "reserved" {
+  type        = bool # CHANGED FROM string TO bool
+  default     = true # CHANGED FROM "Linux" TO true
+  description = "Mandatory Azure flag for App Service Linux plans. Set to true if OS is Linux, false if Windows."
+}
+
