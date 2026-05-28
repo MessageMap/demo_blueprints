@@ -1,19 +1,21 @@
-// Azure App Service Upgrade Hit-List (Non-RI Compliant Tiers)
+// Azure App Service Upgrade Hit-List (Fixed Order-By Type Error)
 resources
 | where type =~ 'microsoft.web/serverfarms'
-| extend skuTier = sku.tier, skuName = sku.name
+| extend skuTier = tostring(sku.tier), skuName = tostring(sku.name)
 // Filter strictly for tiers that do not support Reserved Instances
 | where skuTier !in~ ('PremiumV3', 'PremiumV4', 'IsolatedV2')
 | extend isLinux = tostring(properties.reserved)
 | extend osPlatform = iif(isLinux == "true", "Linux", "Windows")
-// Resolve Management Group ancestry details
+// Resolve Management Group ancestry details with strict string casting
 | join kind=leftouter (
     ResourceContainers 
     | where type =~ 'microsoft.resources/subscriptions' 
-    | project subscriptionId, subscriptionName = name, managementGroup = tostring(properties.managementGroupAncestorsChain[0].displayName)
+    | project subscriptionId, 
+              subscriptionName = tostring(name), 
+              managementGroup = tostring(properties.managementGroupAncestorsChain[0].displayName)
 ) on subscriptionId
 | project 
-    ManagementGroup = managementGroup,
+    ManagementGroup = iif(isempty(managementGroup), "No Management Group", managementGroup),
     SubscriptionName = subscriptionName,
     ResourceGroup = resourceGroup,
     AppServicePlanName = name,
@@ -21,5 +23,6 @@ resources
     OS = osPlatform,
     CurrentTier = skuTier,
     CurrentSKU = skuName,
-    InstanceCount = sku.capacity
-| order by ManagementGroup asc, SubscriptionName asc, CurrentTier asc
+    InstanceCount = toint(sku.capacity)
+| order by tostring(ManagementGroup) asc, tostring(SubscriptionName) asc, tostring(CurrentTier) asc
+
