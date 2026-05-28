@@ -26,3 +26,63 @@ resources
     InstanceCount = toint(sku.capacity)
 | order by tostring(ManagementGroup) asc, tostring(SubscriptionName) asc, tostring(CurrentTier) asc
 
+
+
+
+### Phase 1: Inventory Parsing (Immediate)
+* Run the rectified Azure Resource Graph query across the root Management Group.
+* Export results to a central tracking repository.
+* Sort rows by **OS**, **Location (Region)**, and **Current SKU** to isolate consolidation groupings.
+
+### Phase 2: Infrastructure Upgrades (Days 1–14)
+* **Track A (Legacy Premium):** Update all `PremiumV2` (`P1v2`-`P3v2`) plans to `PremiumV3` (`P1v3`-`P3v3`).
+* **Track B (Standard/Basic Tiers):** Evaluate underutilized `Standard` (`S1`-`S3`) or `Basic` workloads. Update application configurations and deploy to `PremiumV3` tiers to unlock RI compatibility.
+* *Execution Method:* Apply changes directly via Terraform module versions or through coordinated Azure DevOps / GitHub Actions pipeline runs during standard maintenance windows.
+
+### Phase 3: Billing Commitment Overlay (Day 15)
+* Procure the quantified App Service Reserved Instances through the Azure Portal.
+* Scope the reservation strictly to the target **Management Group** to ensure multi-subscription coverage.
+* Choose **Monthly Billing** to minimize initial capital expenditure while locking in the multi-year discount rate.
+
+### Phase 4: Lifecycle Monitoring (Ongoing)
+* Audit the **Reservation Utilization** dashboard inside Azure Cost Management weekly.
+* Maintain a strict target of **>95% utilization**.
+* Scale or exchange reservation allocations if engineering teams shift region or runtime architectures.
+
+---
+
+## 3. Migration Action Matrix (Query Results Baseline)
+
+Use this structured matrix to map the output of your rectified Azure Resource Graph query. Grouping rows by **Management Group**, **Location**, and **OS** will reveal the exact quantity of reservation blocks required.
+
+| Management Group | Subscription Name | Resource Group | App Service Plan Name | Location (Region) | OS (Linux/Windows) | Current SKU | Instance Count | Action Required / Target SKU |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| *e.g., MG-Prod-Root* | *Sub-Core-Shared* | *rg-prod-eastus-01* | *asp-checkout-api* | *eastus* | *Linux* | `S1` (Standard) | `2` | Upgrade to `P1v3`, include in East US Linux RI |
+| *e.g., MG-Prod-Root* | *Sub-App-Data* | *rg-prod-westus-02* | *asp-legacy-portal* | *westus3* | *Windows* | `P1v2` (Prem v2) | `4` | Upgrade to `P1v3`, include in WestUS3 Win RI |
+| | | | | | | | | |
+| | | | | | | | | |
+| | | | | | | | | |
+| | | | | | | | | |
+| | | | | | | | | |
+
+*Copy-paste your exported Azure Resource Graph rows directly into this grid to build your change management tickets.*
+
+---
+
+## 4. Technical Upgrade Guidance & Risk Mitigation
+
+* **No Compute Interruptions:** Upgrading the SKU of an App Service Plan triggers an active rolling deployment on Azure's backend fabric. Your app instances remain live and handle traffic continuously throughout the transition.
+* **Network & DNS Persistence:** IP addresses, custom domains, SSL bindings, and private endpoint configurations are fully preserved during the tier migration.
+* **Scale Flexibility Matching:** Remember that Azure Reserved Instances feature **Instance Size Flexibility**. If you buy an RI for a `P2v3` instance, it will automatically divide its financial discount to cover two running `P1v3` instances seamlessly if your infrastructure scales down dynamically.
+
+---
+
+## 5. Verification Checklist
+
+- [ ] Run KQL Hit-List Query in Azure Resource Graph Explorer.
+- [ ] Export non-compliant instances and populate the **Migration Action Matrix** (Section 3).
+- [ ] Update Terraform/ARM templates or portal configurations to target `PremiumV3` / `PremiumV4`.
+- [ ] Verify all target App Service Plans display the upgraded tier in the Azure Portal.
+- [ ] Purchase the App Service Reservation matching the consolidated OS, Region, and instance counts.
+- [ ] Set Reservation Scope to **Management Group**.
+- [ ] Confirm cost reduction in **Cost Management + Billing** within 24–48 hours of purchase.
