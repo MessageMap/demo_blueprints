@@ -143,3 +143,24 @@ sku_options = {
   "Shared" = ["D1", "Shared"]
   "Basic"  = ["B1", "B2", "B3"] # Low-cost Dev/Test. Ineligible for RIs, but typically outside production savings scope.
 }
+
+
+
+zone_redundant_list = [
+  # Legacy Tiers (Keep for backward compatibility)
+  "p1v2", "p2v2", "p3v2", 
+  
+  # Premium V3 Tiers (Already in your code)
+  "p1v3", "p2v3", "p3v3",
+  
+  # NEW: Premium V4 Tiers (Must be added)
+  "p1v4", "p2v4", "p3v4",
+
+  # NEW: Premium MV3/MV4 Tiers (Memory Optimized)
+  "p1mv3", "p2mv3", "p3mv3", "p4mv3", "p5mv3",
+  "p1mv4", "p2mv4", "p3mv4", "p4mv4", "p5mv4",
+
+  # NEW: Isolated V2 Tiers (ASEv3 Dedicated Environments)
+  "i1v2", "i2v2", "i3v2", "i4v2", "i5v2", "i6v2"
+]
+
