@@ -212,3 +212,15 @@ variable "reserved" {
   description = "Mandatory Azure flag for App Service Linux plans. Set to true if OS is Linux, false if Windows."
 }
 
+
+
+
+
+
+Here is a more conversational and team-friendly version, broken down with bullet points so it’s easy for the author to read and action:
+"Hey, thanks for putting this together! I took a look and have a few quick thoughts on how we can make the workflow a bit smoother for the end users:
+ * **Path format examples:** People probably won't know the exact format we need for exclude_paths. Tossing a quick example in there would save them a lot of guesswork.
+ * **PR vs. Jira redundancy:** Do we really need them to submit both? It feels like a bit of double-duty. A PR already gives us the merge history for the change, while a Jira tracks the request. Standardizing on just one would save everyone some time and friction.
+ * **Template selection:** On the *List of CA Sectigo Template on Venafi* section, users might get stuck trying to figure out which one to pick. Adding a default recommendation or a few quick guidelines on how to choose would be super helpful.
+Let me know what you think!"
+
